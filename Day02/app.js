@@ -9,30 +9,53 @@ const rangeStrings = data.trim().split(",");
 console.log(rangeStrings);
 
 
-let sum = 0;
+let invalidIdSum = 0;
 
 function isInvalid(id) {
-      const string = String(id);
-      if (string.length % 2 !== 0) return false;
+      const idStr = String(id);
+      const length = idStr.length;
 
-      const mid = string.length / 2;
-      const firstHalf = string.slice(0, mid);
-      const secondHalf = string.slice(mid);
-      return firstHalf === secondHalf;
-};
+      if (length < 2) {
+            return false;
+      }
+
+      for (let patternLength = 1; patternLength <= Math.floor(length / 2); patternLength++) {
+            if (length % patternLength !== 0) {
+                  continue;
+            }
+
+            const pattern = idStr.slice(0, patternLength);
+            let isRepeated = true;
+
+            for (let offset = patternLength; offset < length; offset += patternLength) {
+                  const chunk = idStr.slice(offset, offset + patternLength);
+
+                  if (chunk !== pattern) {
+                        isRepeated = false;
+                        break;
+                  }
+            }
+
+            if (isRepeated) {
+                  return true;
+            }
+      }
+
+      return false;
+}
 
 rangeStrings.forEach(rangeStr => {
       const [startStr, endStr] = rangeStr.split("-");
       const start = Number(startStr);
       const end = Number(endStr);
-      for (let i = start; i <= end; i++) {
-            if (isInvalid(i)) {
-                  sum += i;
-                  console.log("Adding invalid ID:", i);
+      for (let id = start; id <= end; id++) {
+            if (isInvalid(id)) {
+                  invalidIdSum += id;
+                  console.log("Adding invalid ID:", id);
 
             }
       }
-      console.log("Start:", start, "End:", end, "Current Sum:", sum);
+      console.log("Start:", start, "End:", end, "Current Sum:", invalidIdSum);
 });
 
-console.log("Sum:", sum);
+console.log("Sum:", invalidIdSum);

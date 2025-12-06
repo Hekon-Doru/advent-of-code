@@ -9,36 +9,40 @@ const joltageStrings = data.trim().split("\r\n");
 console.log(joltageStrings);
 
 function maxJoltageForBank(bankString) {
-      let maxFirstDigit = -1;
-      let maxPairValue = -1;
+  const batterySize = 12;
+  const digits = bankString.trim();
+  let toRemove = digits.length - batterySize;
 
-      for (let i = 0; i < bankString.length; i++) {
-            const currentDigit = Number(bankString[i]);
+  const stack = [];
 
-            if (maxFirstDigit !== -1) {
-                  const candidate = maxFirstDigit * 10 + currentDigit;
+  for (let i = 0; i < digits.length; i++) {
+    const d = digits[i];
 
-                  if (candidate > maxPairValue) {
-                        maxPairValue = candidate;
-                  }
-            }
+    while (
+      toRemove > 0 &&
+      stack.length > 0 &&
+      stack[stack.length - 1] < d
+    ) {
+      stack.pop();
+      toRemove--;
+    }
 
-            if (currentDigit > maxFirstDigit) {
-                  maxFirstDigit = currentDigit;
-            }
-      }
+    stack.push(d);
+  }
 
-      return maxPairValue;
+  const chosenJoltage = stack.slice(0, batterySize);
+ 
+  return Number(chosenJoltage.join(""));
 }
 
 function totalJoltageForAllBanks(lines) {
-      let total = 0;
+  let total = 0;
 
-      for (const bank of lines) {
-            total += maxJoltageForBank(bank);
-      }
+  for (const bank of lines) {
+    total += maxJoltageForBank(bank);
+  }
 
-      return total;
+  return total;
 }
 
 const totalJoltage = totalJoltageForAllBanks(joltageStrings);
